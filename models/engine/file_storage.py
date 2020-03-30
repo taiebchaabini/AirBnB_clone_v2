@@ -69,7 +69,7 @@ class FileStorage:
         """ deletes an object from the dict __objects if it's inside
         """
         if obj:
-            key = "{}.{}".format(type(obj).__name__, obj.id)
+            key = "{}.{}".format(obj.__class__.__name__, obj.id)
             try:
                 del FileStorage.__objects[key]
                 self.save()
