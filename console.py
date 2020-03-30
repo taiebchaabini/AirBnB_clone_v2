@@ -43,7 +43,7 @@ class HBNBCommand(cmd.Cmd):
                 raise SyntaxError()
             my_list = line.split(" ")
             my_param = {}
-            for element in my_list:
+            for element in my_list[1:]:
                 if '=' in element:
                     ele = element.split("=")
                     if ele[1] != '':
@@ -74,8 +74,8 @@ class HBNBCommand(cmd.Cmd):
                 for i in range(len(value)):
                     if (value[i] == '"' and (i == 0 or value[i - 1] != '\\')):
                         return
-                    if value[i] == '_':
-                        value[i] = ' '
+                value = value.replace('_', ' ')
+                value = value.replace('\\"', '"')
                 my_param[param[0]] = value
         except:
             return
