@@ -20,12 +20,20 @@ class FileStorage:
     __file_path = "file.json"
     __objects = {}
 
-    def all(self):
-        """returns a dictionary
-        Return:
-            returns a dictionary of __object
+    def all(self, cls=None):
         """
-        return self.__objects
+        If cls is None, all() returns the __object dictionary
+        Otherwise,
+            returns a dictionary of objects of that type of class
+        """
+        if cls is None:
+            return FileStorage.__objects
+        else:
+            d = {}
+            for k, v in FileStorage.__objects.items():
+                if v.__class__ == cls:
+                    d[k] = v
+            return d
 
     def new(self, obj):
         """sets __object to given obj
@@ -34,13 +42,13 @@ class FileStorage:
         """
         if obj:
             key = "{}.{}".format(type(obj).__name__, obj.id)
-            self.__objects[key] = obj
+            FileStorage.__objects[key] = obj
 
     def save(self):
         """serialize the file path to JSON file path
         """
         my_dict = {}
-        for key, value in self.__objects.items():
+        for key, value in FileStorage.__objects.items():
             my_dict[key] = value.to_dict()
         with open(self.__file_path, 'w', encoding="UTF-8") as f:
             json.dump(my_dict, f)
@@ -52,6 +60,18 @@ class FileStorage:
             with open(self.__file_path, 'r', encoding="UTF-8") as f:
                 for key, value in (json.load(f)).items():
                     value = eval(value["__class__"])(**value)
-                    self.__objects[key] = value
+                    FileStorage.__objects[key] = value
+                    self.new(value)
         except FileNotFoundError:
             pass
+
+    def delete(self, obj=None):
+        """ deletes an object from the dict __objects if it's inside
+        """
+        if obj:
+            key = "{}.{}".format(type(obj).__name__, obj.id)
+            try:
+                del FileStorage.__objects[key]
+                self.save()
+            except KeyError:
+                pass
