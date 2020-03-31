@@ -42,43 +42,13 @@ class HBNBCommand(cmd.Cmd):
             if not line:
                 raise SyntaxError()
             my_list = line.split(" ")
-            my_param = {}
-            for element in my_list[1:]:
-                if '=' in element:
-                    ele = element.split("=")
-                    if ele[1] != '':
-                        self.check_parameter(ele, my_param)
-            obj = eval("{}(**my_param)".format(my_list[0]))
+            obj = eval("{}()".format(my_list[0]))
             obj.save()
             print("{}".format(obj.id))
         except SyntaxError:
             print("** class name missing **")
-        except NameError as e:
-            print(e)
+        except NameError:
             print("** class doesn't exist **")
-
-    def check_parameter(self, param, my_param):
-        """ check_parameter, checks if the param fits the requirememnts,
-        if it fits, it gets added to the dictionary my_param,
-        otherwise the parameter is skipped.
-        param is a list = [attribute, value]
-        my_param is a dictionary of all entered valid parameters
-        """
-        try:
-            if '"' not in param[1] and '.' not in param[1]:
-                my_param[param[0]] = int(param[1])
-            elif '.' in param[1] and '"' not in param[1]:
-                my_param[param[0]] = float(param[1])
-            else:
-                value = param[1][1:-1]
-                for i in range(len(value)):
-                    if (value[i] == '"' and (i == 0 or value[i - 1] != '\\')):
-                        return
-                value = value.replace('_', ' ')
-                value = value.replace('\\"', '"')
-                my_param[param[0]] = value
-        except:
-            return
 
     def do_show(self, line):
         """Prints the string representation of an instance
