@@ -25,6 +25,12 @@ class FileStorage:
         Return:
             returns a dictionary of __object
         """
+        if (cls is not None):
+            cls_objects = {}
+            for i in self.__objects:
+                if (cls.__name__ in i):
+                    cls_objects[i] = self.__objects[i]
+            self.__objects = cls_objects
         return self.__objects
 
     def new(self, obj):
@@ -35,17 +41,18 @@ class FileStorage:
         if obj:
             key = "{}.{}".format(type(obj).__name__, obj.id)
             self.__objects[key] = obj
-    
+
     def delete(self, obj=None):
-        keyword = "{}.{}".format(type(obj).__name__, obj.id)
+        """ to delete obj from __objects if it’s inside
+        Return:
+            return a new dictionary of __objects
+        """
         remove_list = []
-        
         for i in self.__objects:
-            if i == keyword:
+            if obj.id in i:
                 remove_list.append(i)
         for i in remove_list:
             del(self.__objects[i])
-        return self.__objects
 
     def save(self):
         """serialize the file path to JSON file path
