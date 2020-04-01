@@ -46,6 +46,6 @@ class Place(BaseModel, Base):
         r = {}
         all_reviews = storage.all(Review)
         for k, v in all_reviews.items():
-            if v.place_id = self.id:
+            if v.place_id == self.id:
                 r[k] = v
         return r
