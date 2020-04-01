@@ -16,7 +16,7 @@ class DBStorage:
     """ dbstorage engine """
     __engine = None
     __session = None
-    all_classes = ["State", "City", "User", "Place"]
+    all_classes = ["State", "City", "User", "Place", "Review"]
 
     def __init__(self):
         """ instantiation """
