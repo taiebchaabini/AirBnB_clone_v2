@@ -57,7 +57,7 @@ class HBNBCommand(cmd.Cmd):
                             check[1] = float(check[1])
                         elif (type(eval(check[1])) is int):
                             check[1] = int(check[1])
-                        setattr(obj, check[0], check[1]) 
+                        setattr(obj, check[0], check[1])
                     except Exception:
                         pass
             obj.save()
