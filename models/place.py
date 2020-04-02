@@ -48,11 +48,11 @@ class Place(BaseModel, Base):
         with place_id equals to the current Place.id
         """
         from models import storage
-        r = {}
+        r = []
         all_reviews = storage.all(Review)
-        for k, v in all_reviews.items():
+        for v in all_reviews.values():
             if v.place_id == self.id:
-                r[k] = v
+                r.append(v)
         return r
 
     @property
@@ -81,7 +81,7 @@ class Place(BaseModel, Base):
             from models import storage
             all_amenities = storage.all(Amenity)
             linked_amenities = []
-            for key, value in all_amenities:
+            for value in all_amenities.values():
                 if value.id in self.amenity_ids:
                     linked_amenities.append(value)
             self._amenities = linked_amenities 
