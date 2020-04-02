@@ -4,6 +4,7 @@ from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, ForeignKey, Integer, Float
 from sqlalchemy.orm import relationship
 from models.review import Review
+from models.amenity import Amenity
 
 
 class Place(BaseModel, Base):
@@ -34,6 +35,8 @@ class Place(BaseModel, Base):
     longitude = Column(Float, nullable=True)
     reviews = relationship("Review", cascade="all,delete", backref="place")
     amenity_ids = []
+    amenities = relationship('Amenity', secondary=place_amenity,
+                             viewonly=False)
 
     @property
     def reviews(self):
@@ -49,3 +52,31 @@ class Place(BaseModel, Base):
             if v.place_id == self.id:
                 r[k] = v
         return r
+
+    @property
+    def amenities(self):
+        """
+        Getter attribute amenities that returns the list of Amenity instances
+        based on the attribute amenity_ids that contains all Amenity.id linked
+        to the Place
+        """
+        from models import storage
+        amenities = storage.all(Amenity)
+        linked_amenities = {}
+        for key, value in amenities:
+            if value.id in self.amenity_ids:
+                linked_amenities[key] = value
+        return linked_amenities
+
+    @amenities.setter
+    def amenities(self, value):
+        """
+        Setter attribute amenities that handles append method for adding an
+        Amenity.id to the attribute amenity_ids. This method should accept only
+        Amenity object, otherwise, do nothing.
+        """
+        try:
+            if (value.__class__.__name__ == "Amenity"):
+                self.amenity_ids.append(value.id)
+        except Exception:
+            pass
