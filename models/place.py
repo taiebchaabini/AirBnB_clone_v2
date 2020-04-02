@@ -79,8 +79,7 @@ class Place(BaseModel, Base):
         return amen
 
     @amenities.setter
-    def amenities(self):
+    def amenities(self, obj):
         """ adds Amenity.id to amenity_ids"""
-        def append(self, obj):
-            if obj is not None and obj.__class__.__name__ == "Amenity":
-                self.amenity_ids.append(obj.id)
+        if obj is not None and obj.__class__.__name__ == "Amenity":
+            self.amenity_ids.append(obj.id)
