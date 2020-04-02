@@ -37,8 +37,7 @@ class Place(BaseModel, Base):
     reviews = relationship("Review", cascade="all,delete", backref="place")
     amenity_ids = []
     _amenities = relationship('Amenity', secondary='place_amenity',
-                             viewonly=False, back_populates="place_amenities")
-  
+                              viewonly=False, back_populates="place_amenities")
 
     @property
     def reviews(self):
@@ -62,9 +61,9 @@ class Place(BaseModel, Base):
         based on the attribute amenity_ids that contains all Amenity.id linked
         to the Place
         """
-        
+
         return self._amenities
-        
+
     @amenities.setter
     def amenities(self, value):
         """
@@ -84,4 +83,4 @@ class Place(BaseModel, Base):
             for value in all_amenities.values():
                 if value.id in self.amenity_ids:
                     linked_amenities.append(value)
-            self._amenities = linked_amenities 
+            self._amenities = linked_amenities
