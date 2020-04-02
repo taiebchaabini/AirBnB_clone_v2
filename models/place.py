@@ -80,8 +80,8 @@ class Place(BaseModel, Base):
                 pass
             from models import storage
             all_amenities = storage.all(Amenity)
-            linked_amenities = {}
+            linked_amenities = []
             for key, value in all_amenities:
                 if value.id in self.amenity_ids:
-                    linked_amenities[key] = value
+                    linked_amenities.append(value)
             self._amenities = linked_amenities 
