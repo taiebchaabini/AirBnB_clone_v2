@@ -3,7 +3,8 @@
 import uuid
 import models
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Date, ForeignKey, create_engine
+from sqlalchemy import Column, Integer, String, DateTime,\
+        ForeignKey, create_engine
 from sqlalchemy.orm import relationship, sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
 from os import getenv
@@ -16,6 +17,10 @@ class BaseModel:
     """This class will defines all common attributes/methods
     for other classes
     """
+
+    id = Column(String(60), unique=True, nullable=False, primary_key=True)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow())
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())
 
     def __init__(self, *args, **kwargs):
         """Instantiation of base model class
@@ -34,11 +39,8 @@ class BaseModel:
                 if key != "__class__":
                     setattr(self, key, value)
         else:
-            self.id = Column(String(60), unique=True, nullable=False, primary_key=True, default=str(uuid.uuid4()))
-            self.created_at = Column(Date, nullable=False, default=datetime.utcnow())
-            self.updated_at = Column(Date, nullable=False, default=datetime.utcnow())
-
-            
+            self.id = str(uuid.uuid4())
+            self.created_at = self.updated_at = datetime.now()
 
     def __str__(self):
         """returns a string
@@ -74,7 +76,7 @@ class BaseModel:
         my_dict["created_at"] = self.created_at.isoformat()
         my_dict["updated_at"] = self.updated_at.isoformat()
         return my_dict
-    
+
     def delete(self):
         """
             delete the current instance from the storage (models.storage)

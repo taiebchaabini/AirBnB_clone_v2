@@ -18,45 +18,45 @@ class DBStorage:
     __session = None
 
     def __init__(self):
-        self.__engine = create_engine("mysql+mysqldb://{}:{}@{}/{}"
-                .format(getenv('HBNB_MYSQL_USER'), getenv('HBNB_MYSQL_PWD'),
-                        getenv('HBNB_MYSQL_HOST'), getenv('HBNB_MYSQL_DB')),\
-                        pool_pre_ping=True)
+        self.__engine = create_engine("mysql+mysqldb://{}:{}@{}/{}" .format(
+                        getenv('HBNB_MYSQL_USER'), getenv('HBNB_MYSQL_PWD'),
+                        getenv('HBNB_MYSQL_HOST'), getenv('HBNB_MYSQL_DB')),
+                pool_pre_ping=True)
         Session = scoped_session(
                 sessionmaker(bind=self.__engine, expire_on_commit=False))
         self.__session = Session()
         if (getenv('HBNB_ENV') == "test"):
             self.__session.drop_all()
-            
+
     def all(self, cls=None):
         """
             query on the current database session (self.__session) all objects
             depending of the class name (argument cls)
         """
-        print("DBSTORAGE Funciton ALL")
-        exit()
         self.__objects = {}
         if (cls):
-            for k, v in self.__session.query(cls.name):
-                self.__objects[k] = v
+            for o in self.__session.query(eval(cls.name)).all():
+                key = "{}.{}".format(cls.name, o.id)
+                self.__objects[key] = o
             return self.__objects
-        for k, v in self.__session.query():
-            self.__objects[k] = v
+        objects = ['City', 'State']
+        for c in objects:
+            for o in self.__session.query(eval(c)).all():
+                key = "{}.{}".format(c, o.id)
+                self.__objects[key] = o
         return self.__objects
-    
+
     def new(self, obj):
         """
         add the object to the current database session.
         """
-        print(obj)
         self.__session.add(obj)
-        self.save()
 
     def save(self):
         """
             commit all changes of the current database session.
         """
-        #self.__session.commit()
+        self.__session.commit()
 
     def delete(self, obj=None):
         """
@@ -64,7 +64,7 @@ class DBStorage:
         """
         if (obj):
             self.__session.delete(obj)
-    
+
     def reload(self):
         """
             create all tables in the database.
