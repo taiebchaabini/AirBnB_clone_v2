@@ -74,7 +74,7 @@ class Place(BaseModel, Base):
         """
         if (getenv('HBNB_TYPE_STORAGE') != "db"):
             try:
-                if (self.__class__.__name__ == "Amenity"):
+                if (value.__class__.__name__ == "Amenity"):
                     self.amenity_ids.append(value.id)
             except Exception:
                 pass
