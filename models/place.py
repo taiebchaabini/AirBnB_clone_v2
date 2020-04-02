@@ -35,8 +35,10 @@ class Place(BaseModel, Base):
     longitude = Column(Float, nullable=True)
     reviews = relationship("Review", cascade="all,delete", backref="place")
     amenity_ids = []
-    amenities = relationship('Amenity', secondary='place_amenity',
-                             viewonly=False)
+    _amenities = relationship('Amenity', secondary='place_amenity',
+                             viewonly=False, back_populates="place_amenities")
+
+
 
     @property
     def reviews(self):
@@ -60,6 +62,10 @@ class Place(BaseModel, Base):
         based on the attribute amenity_ids that contains all Amenity.id linked
         to the Place
         """
+        
+        if (getenv("HBNB_TYPE_STORAGE") == "db"):
+            return self.amenities
+        
         from models import storage
         amenities = storage.all(Amenity)
         linked_amenities = {}
@@ -75,8 +81,9 @@ class Place(BaseModel, Base):
         Amenity.id to the attribute amenity_ids. This method should accept only
         Amenity object, otherwise, do nothing.
         """
+
         try:
             if (value.__class__.__name__ == "Amenity"):
                 self.amenity_ids.append(value.id)
         except Exception:
-            pass
+                pass

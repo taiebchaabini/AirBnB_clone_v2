@@ -21,4 +21,5 @@ class Amenity(BaseModel, Base):
     """ Class attribute place_amenities must represent a relationship
     Many-To-Many between the class Place and Amenity. Please see below more
     detail: place_amenity in the Place update """
-    place_amenities = relationship("Place", secondary='place_amenity')
+    place_amenities = relationship("Place", secondary='place_amenity',
+            back_populates="_amenities")
