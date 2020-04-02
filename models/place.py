@@ -5,6 +5,7 @@ from sqlalchemy import Column, String, ForeignKey, Integer, Float
 from sqlalchemy.orm import relationship
 from models.review import Review
 from models.amenity import Amenity
+from os import getenv
 
 
 class Place(BaseModel, Base):
@@ -37,8 +38,7 @@ class Place(BaseModel, Base):
     amenity_ids = []
     _amenities = relationship('Amenity', secondary='place_amenity',
                              viewonly=False, back_populates="place_amenities")
-
-
+  
 
     @property
     def reviews(self):
@@ -63,17 +63,8 @@ class Place(BaseModel, Base):
         to the Place
         """
         
-        if (getenv("HBNB_TYPE_STORAGE") == "db"):
-            return self.amenities
+        return self._amenities
         
-        from models import storage
-        amenities = storage.all(Amenity)
-        linked_amenities = {}
-        for key, value in amenities:
-            if value.id in self.amenity_ids:
-                linked_amenities[key] = value
-        return linked_amenities
-
     @amenities.setter
     def amenities(self, value):
         """
@@ -81,9 +72,16 @@ class Place(BaseModel, Base):
         Amenity.id to the attribute amenity_ids. This method should accept only
         Amenity object, otherwise, do nothing.
         """
-
-        try:
-            if (value.__class__.__name__ == "Amenity"):
-                self.amenity_ids.append(value.id)
-        except Exception:
+        if (getenv('HBNB_TYPE_STORAGE') != "db"):
+            try:
+                if (self.__class__.__name__ == "Amenity"):
+                    self.amenity_ids.append(value.id)
+            except Exception:
                 pass
+            from models import storage
+            all_amenities = storage.all(Amenity)
+            linked_amenities = {}
+            for key, value in all_amenities:
+                if value.id in self.amenity_ids:
+                    linked_amenities[key] = value
+            self._amenities = linked_amenities 
