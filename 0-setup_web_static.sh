@@ -9,7 +9,7 @@ echo "This is my sample content" > /data/web_static/releases/test/index.html
 ln -sf /data/web_static/releases/test /data/web_static/current 
 chown ubuntu:ubuntu -R /data/
 regex="^\tlocation+"
-location="\n\n\tlocation \/hbtn_static\/ \{\
+location="\n\n\tlocation \/hbnb_static\/ \{\
 \n\t\talias \/data\/web_static\/current\/\;\
 \n\t\tautoindex off\;\
 \n\t\}"
