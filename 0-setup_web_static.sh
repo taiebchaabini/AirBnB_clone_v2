@@ -10,7 +10,7 @@ ln -sf /data/web_static/releases/test /data/web_static/current
 chown ubuntu:ubuntu -R /data/
 regex="^\tlocation+"
 location="\n\n\tlocation \/hbtn_static\/ \{\
-\n\t\talias \/data\/web_static\/current\/\
+\n\t\talias \/data\/web_static\/current\/\;\
 \n\t\tautoindex off\;\
 \n\t\}"
 sed -i -r "s/$regex/$location\n\n\0/g" /etc/nginx/sites-enabled/default
