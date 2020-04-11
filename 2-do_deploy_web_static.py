@@ -13,8 +13,14 @@ env.hosts = ['34.73.100.0', '34.228.167.237']
 
 def do_pack():
     """
-    generates a .tgz archive from the contents of the web_static, must be
-    stored in the folder versions
+    - Upload the archive to the /tmp/ directory of the web server
+    - iUncompress the archive to the folder /data/web_static/releases/<archive
+    filename without extension> on the web server
+    - Delete the archive from the web server
+    - Delete the symbolic link /data/web_static/current from the web server
+    - Create a new the symbolic link /data/web_static/current on the web
+    server, linked to the new version of your code
+    (/data/web_static/releases/<archive filename without extension>)
     """
 
     date = datetime.now().strftime("%Y%m%d%H%M%S")
