@@ -78,8 +78,6 @@ def do_clean(number=0):
     archives_nb = local('ls -ltr versions | wc -l', capture=True).stdout
     archives_nb = int(archives_nb)
     if (number == 0 or number == 1):
-        if (archives_nb == 0 or archives_nb == 1):
-            return True
         remove_nb = archives_nb - 1
     else:
         remove_nb = archives_nb - int(number)
