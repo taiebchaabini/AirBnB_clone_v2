@@ -82,11 +82,15 @@ def do_stress():
 def do_clean(number=0):
     """
     deletes out-of-date archives.
-    Return True if operation is not needed
+    Return True if there is not operation to do otherwise False if an error is
+    raised
     """
+    try:
+        number = int(number)
+    except Exception:
+        return False
     archives_nb = local('ls -ltr versions | wc -l', capture=True).stdout
     archives_nb = int(archives_nb) - 1
-    number = int(number)
     if (archives_nb <= 0 or archives_nb == 1):
         return True
     if (number == 0 or number == 1):
