@@ -2,13 +2,14 @@
 """
     Fabric script to automate deployment of web_static directory
 """
-from fabric.api import run, put, local, env
+from fabric.api import run, put, local, env, execute, hosts
 from datetime import datetime
 import os.path
 
 
-env.hosts = ['34.73.100.0', '34.228.167.237']
-env.user = 'ubuntu'
+def do_hosts():
+    env.hosts = ['34.73.100.0', '34.228.167.237']
+    env.user = 'ubuntu'
 
 
 def do_pack():
@@ -62,15 +63,17 @@ def deploy():
       archive
     - Return the return value of do_deploy
     """
-    path = do_pack()
+    path = execute(do_pack)
     if (path is None):
         return False
-    deploy = do_deploy(path)
+    execute(do_hosts)
+    deploy = execute(do_deploy, archive_path=path['<local-only>'])
     if (deploy is False):
         return False
     return deploy
 
 
+@hosts(['34.73.100.0', '34.228.167.237'])
 def do_clean(number=0):
     """
     deletes out-of-date archives.
@@ -78,14 +81,15 @@ def do_clean(number=0):
     """
     archives_nb = local('ls -ltr versions | wc -l', capture=True).stdout
     archives_nb = int(archives_nb) - 1
-    if (archives_nb == 0 or archives_nb == 1):
+    number = int(number)
+    if (archives_nb <= 0 or archives_nb == 1):
         return True
     if (number == 0 or number == 1):
         remove_nb = archives_nb - 1
     else:
-        remove_nb = archives_nb - int(number)
+        remove_nb = archives_nb - number
         if (remove_nb) <= 0:
-            remove_nb = 0
+            return True
     archives_list = local("ls -ltr versions | tail -n " + str(archives_nb) + "\
             | head -n \
             " + str(remove_nb) + "\
