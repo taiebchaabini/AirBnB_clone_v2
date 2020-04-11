@@ -8,7 +8,7 @@ import os.path
 
 
 env.hosts = ['34.73.100.0', '34.228.167.237']
-
+env.user = 'ubuntu'
 
 def do_pack():
     """
@@ -73,14 +73,21 @@ def deploy():
 def do_clean(number=0):
     """
     deletes out-of-date archives.
+    Return True if operation success otherwise False
     """
-    archives_nb = run('ls -ltr versions | wc -l') - 1
+    archives_nb = local('ls -ltr versions | wc -l', capture=True).stdout
+    archives_nb = int(archives_nb)
     if (number == 0 or number == 1):
+        if (archives_nb == 0 or archives_nb == 1):
+            return True
         remove_nb = archives_nb - 1
     else:
-        remove_nb = archives_nb - number
-    archives_list = run('ls -ltr versions | tail -n ' + archives_nb +
-                        ' head -n ' + remove_nb + ' | awk \'{print $9}\'')
-    for archive_name in archives_list:
-        local('rm -f versions/' + archive_name)
-        run('rm -rf /data/web_static/releases/' + archive_name.split('.')[0])
+        remove_nb = archives_nb - int(number)
+    archives_list = local("ls -ltr versions | tail -n " + str(archives_nb) +" | head -n " + str(remove_nb) + " | awk '{print $9}'", capture=True).rsplit("\n")
+    if (archives_list[0] == ''):
+        del(archives_list[0])
+    if len(archives_list) >= 1:
+        for archive_name in archives_list:
+            local('rm versions/' + archive_name)
+            run('rm -rf /data/web_static/releases/'\
+                    + archive_name.split('.')[0])
