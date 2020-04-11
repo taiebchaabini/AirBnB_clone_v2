@@ -2,13 +2,9 @@
 """
     Fabric script to automate deployment of web_static directory
 """
-from fabric.api import run, put, local, env, execute
+from fabric.api import run, put, local, env, execute, hosts
 from datetime import datetime
 import os.path
-
-
-env.hosts = ['34.73.100.0', '34.228.167.237']
-env.user = 'ubuntu'
 
 
 def do_pack():
@@ -26,6 +22,7 @@ def do_pack():
     return None
 
 
+@hosts('34.73.100.0', '34.228.167.237')
 def do_deploy(archive_path):
     """
     - Upload the archive to the /tmp/ directory of the web server
@@ -81,6 +78,7 @@ def do_stress():
         local('touch ' + path)
 
 
+@hosts('34.73.100.0', '34.228.167.237')
 def do_clean(number=0):
     """
     deletes out-of-date archives.
@@ -105,5 +103,5 @@ def do_clean(number=0):
         for archive_name in archives_list:
             if (archive_name != ''):
                 local('rm versions/' + archive_name)
-            run('rm -rf /data/web_static/releases/\
+                run('rm -rf /data/web_static/releases/\
                     ' + archive_name.split('.')[0])
