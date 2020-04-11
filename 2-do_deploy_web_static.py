@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 """
-Fabric script (based on the file 1-pack_web_static.py) that distributes an
-archive to your web servers, using the function do_deploy.
+    Fabric script to automate deployment of web_static directory
 """
 from fabric.api import run, put, local, env
 from datetime import datetime
@@ -13,16 +12,9 @@ env.hosts = ['34.73.100.0', '34.228.167.237']
 
 def do_pack():
     """
-    - Upload the archive to the /tmp/ directory of the web server
-    - iUncompress the archive to the folder /data/web_static/releases/<archive
-    filename without extension> on the web server
-    - Delete the archive from the web server
-    - Delete the symbolic link /data/web_static/current from the web server
-    - Create a new the symbolic link /data/web_static/current on the web
-    server, linked to the new version of your code
-    (/data/web_static/releases/<archive filename without extension>)
+     generates a .tgz archive from the contents of the web_static folder of
+     your AirBnB Clone repo, using the function do_pack.
     """
-
     date = datetime.now().strftime("%Y%m%d%H%M%S")
     path = 'versions/web_static_' + date + '.tgz'
     if not (os.path.exists("versions")):
@@ -34,6 +26,16 @@ def do_pack():
 
 
 def do_deploy(archive_path):
+    """
+    - Upload the archive to the /tmp/ directory of the web server
+    - iUncompress the archive to the folder /data/web_static/releases/<archive
+    filename without extension> on the web server
+    - Delete the archive from the web server
+    - Delete the symbolic link /data/web_static/current from the web server
+    - Create a new the symbolic link /data/web_static/current on the web
+    server, linked to the new version of your code
+    (/data/web_static/releases/<archive filename without extension>)
+    """
     if not (os.path.exists(archive_path)):
             return False
     archive_name = archive_path.split('/')[1]
