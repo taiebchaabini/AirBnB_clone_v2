@@ -10,6 +10,7 @@ import os.path
 env.hosts = ['34.73.100.0', '34.228.167.237']
 env.user = 'ubuntu'
 
+
 def do_pack():
     """
      generates a .tgz archive from the contents of the web_static folder of
@@ -76,16 +77,21 @@ def do_clean(number=0):
     Return True if operation success otherwise False
     """
     archives_nb = local('ls -ltr versions | wc -l', capture=True).stdout
-    archives_nb = int(archives_nb)
+    archives_nb = int(archives_nb) - 1
+    if (archives_nb == 0):
+        return False
     if (number == 0 or number == 1):
         remove_nb = archives_nb - 1
     else:
         remove_nb = archives_nb - int(number)
-    archives_list = local("ls -ltr versions | tail -n " + str(archives_nb) +" | head -n " + str(remove_nb) + " | awk '{print $9}'", capture=True).rsplit("\n")
-    if (archives_list[0] == ''):
-        del(archives_list[0])
+        if (remove_nb) <= 0:
+            remove_nb = number
+    archives_list = local("ls -ltr versions | tail -n " + str(archives_nb) + "\
+            | head -n \
+            " + str(remove_nb) + "\
+            | awk '{print $9}'", capture=True).rsplit("\n")
     if len(archives_list) >= 1:
         for archive_name in archives_list:
             local('rm versions/' + archive_name)
-            run('rm -rf /data/web_static/releases/'\
-                    + archive_name.split('.')[0])
+            run('rm -rf /data/web_static/releases/\
+                    ' + archive_name.split('.')[0])
