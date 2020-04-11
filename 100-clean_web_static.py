@@ -74,18 +74,18 @@ def deploy():
 def do_clean(number=0):
     """
     deletes out-of-date archives.
-    Return True if operation success otherwise False
+    Return True if operation is not needed
     """
     archives_nb = local('ls -ltr versions | wc -l', capture=True).stdout
     archives_nb = int(archives_nb) - 1
-    if (archives_nb == 0):
-        return False
+    if (archives_nb == 0 or archives_nb == 1):
+        return True
     if (number == 0 or number == 1):
         remove_nb = archives_nb - 1
     else:
         remove_nb = archives_nb - int(number)
         if (remove_nb) <= 0:
-            remove_nb = number
+            remove_nb = 0
     archives_list = local("ls -ltr versions | tail -n " + str(archives_nb) + "\
             | head -n \
             " + str(remove_nb) + "\
