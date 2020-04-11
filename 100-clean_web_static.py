@@ -2,14 +2,13 @@
 """
     Fabric script to automate deployment of web_static directory
 """
-from fabric.api import run, put, local, env, execute, hosts
+from fabric.api import run, put, local, env, execute
 from datetime import datetime
 import os.path
 
 
-def do_hosts():
-    env.hosts = ['34.73.100.0', '34.228.167.237']
-    env.user = 'ubuntu'
+env.hosts = ['34.73.100.0', '34.228.167.237']
+env.user = 'ubuntu'
 
 
 def do_pack():
@@ -66,14 +65,22 @@ def deploy():
     path = execute(do_pack)
     if (path is None):
         return False
-    execute(do_hosts)
     deploy = execute(do_deploy, archive_path=path['<local-only>'])
     if (deploy is False):
         return False
     return deploy
 
 
-@hosts(['34.73.100.0', '34.228.167.237'])
+def do_stress():
+    """
+    Function made for debugging purpose of fn do_clean
+    """
+    for i in range(0, 10):
+        date = datetime.now().strftime("%Y%m%d%H%M%S")
+        path = 'versions/web_static_' + date + "_" + str(i) + '.tgz'
+        local('touch ' + path)
+
+
 def do_clean(number=0):
     """
     deletes out-of-date archives.
@@ -88,7 +95,7 @@ def do_clean(number=0):
         remove_nb = archives_nb - 1
     else:
         remove_nb = archives_nb - number
-        if (remove_nb) <= 0:
+        if (remove_nb <= 0):
             return True
     archives_list = local("ls -ltr versions | tail -n " + str(archives_nb) + "\
             | head -n \
@@ -96,6 +103,7 @@ def do_clean(number=0):
             | awk '{print $9}'", capture=True).rsplit("\n")
     if len(archives_list) >= 1:
         for archive_name in archives_list:
-            local('rm versions/' + archive_name)
+            if (archive_name != ''):
+                local('rm versions/' + archive_name)
             run('rm -rf /data/web_static/releases/\
                     ' + archive_name.split('.')[0])
