@@ -32,6 +32,12 @@ file { '/data/web_static/releases/test/index.html':
   require =>  Package['nginx']
 }
 
+file { '/data/web_static/releases/test/':
+  ensure => 'link',
+  target => '/data/web_static/current',
+  force  => 'true'
+}
+
 file_line { 'ADDING A LOCATION':
   ensure  => 'present',
   path    => '/etc/nginx/sites-enabled/default',
@@ -40,3 +46,5 @@ file_line { 'ADDING A LOCATION':
   require => Package['nginx'],
   notify  => Service['nginx'],
 }
+
+
