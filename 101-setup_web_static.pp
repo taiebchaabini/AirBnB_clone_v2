@@ -16,17 +16,10 @@ package { 'nginx':
 
 service {'nginx':
   ensure  =>  'running',
-  require => file_line['adding a location'],
+  require => file_line['ADDING A LOCATION']
 }
 
-file { '/data/web_static/releases/test/':
-  ensure  => 'directory',
-  owner   => 'ubuntu',
-  group   => 'ubuntu',
-  require =>  Package['nginx']
-}
-
-file { '/data/web_static/releases/test/':
+file { ['/data', '/data/web_static', '/data/web_static/shared', '/data/web_static/releases', '/data/web_static/releases/test'] :
   ensure  => 'directory',
   owner   => 'ubuntu',
   group   => 'ubuntu',
@@ -39,14 +32,11 @@ file { '/data/web_static/releases/test/index.html':
   require =>  Package['nginx']
 }
 
-file_line { 'adding a location':
+file_line { 'ADDING A LOCATION':
   ensure  => 'present',
   path    => '/etc/nginx/sites-enabled/default',
-  line    => '\n\n\tlocation \/hbnb_static\/ \{\
-\n\t\talias \/data\/web_static\/current\/\;\
-\n\t\tautoindex off\;\
-\n\t\}',
-  before  => '^\tlocation+',
+  line    => 'location /hbnb_static/ { alias /data/web_static/current/; autoindex off; } location / { ',
+  match   => '^\s+location+',
   require => Package['nginx'],
   notify  => Service['nginx'],
 }
