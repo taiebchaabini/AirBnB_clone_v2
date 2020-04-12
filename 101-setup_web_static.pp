@@ -33,9 +33,9 @@ file { '/data/web_static/releases/test/index.html':
 }
 
 file { '/data/web_static/current':
-  ensure  => 'link',
-  target  => '/data/web_static/releases/test',
-  force   => 'true'
+  ensure => 'link',
+  target => '/data/web_static/releases/test',
+  force  => true
 }
 
 file_line { 'ADDING A LOCATION':
