@@ -19,14 +19,14 @@ service {'nginx':
   require => file_line['adding a location'],
 }
 
-file { '/data/web_static/releases/test/'':
+file { '/data/web_static/releases/test/':
   ensure  => 'directory',
   owner   => 'ubuntu',
   group   => 'ubuntu',
   require =>  Package['nginx']
 }
 
-file { '/data/web_static/releases/test/'':
+file { '/data/web_static/releases/test/':
   ensure  => 'directory',
   owner   => 'ubuntu',
   group   => 'ubuntu',
