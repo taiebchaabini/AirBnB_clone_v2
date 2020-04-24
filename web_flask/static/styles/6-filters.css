@@ -61,7 +61,7 @@ button:hover {
 
 .popover > ul{
     max-height: 300px;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .amenities .popover {
